@@ -1,0 +1,22 @@
+{
+  "name": "attendance-system",
+  "version": "1.0.0",
+  "description": "This project is to manage the attendance of students in college ",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nodejs",
+    "mongodb"
+  ],
+  "author": "Oghenevwede Austin Okonorho",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongodb": "^6.7.0",
+    "path": "^0.12.7"
+  }
+}
