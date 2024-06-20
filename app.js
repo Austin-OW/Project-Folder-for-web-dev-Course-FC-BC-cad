@@ -2,11 +2,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const mongodb = require('mongodb');
+const methodOverride = require("method-override");
 require('dotenv').config();
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
+app.set("view engine", "ejs");
 
 const port = process.env.PORT || 3000;
 const mongoURI = process.env.MONGO_URI;
@@ -19,16 +22,39 @@ mongodb.MongoClient.connect(mongoURI, {
 })
 .then(client => {
   console.log('MongoDB connected');
-  db = client.db(); // Assign database reference to 'db' variable
+  db = client.db("library_management_system"); // Assign database reference to 'db' variable
 })
 .catch(err => {
   console.error('MongoDB connection error:', err);
   process.exit(1); // Exit process if MongoDB connection fails
 });
 
-
 app.get('/', (reg, res)=> {
     res.send("Hello World");
+});
+
+app.get("/books", (req, res) => {
+  db.collection("books").find().toArray()
+  .then(books => {
+    res.render("index", {books});
+  })
+  .catch(err => res.status(500).json({error: "An error occurred while retrieving books", detail: err}));
+});
+
+app.get("/books/new", (req, res) => {
+  res.render("add_books");
+});
+
+app.post("/books", (req, res) => {
+  const book = {
+    title: req.body.title,
+    author: req.body.author,
+    publishedDate: new Date(req.body.publishedDate)
+  };
+
+  db.collection("books").insertOne(book)
+  .then(result => {res.send(result);})
+  .catch(err => res.status(500).json({error: "An error occured while inserting book", Detail:err}));
 });
 
 app.listen(port, ()=> {
